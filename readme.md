@@ -1,24 +1,77 @@
-# Swarm foraging simulation
+# Swarm Foraging Under Heat and Energy Constraint
 
-this is a simple python simulation built with mesa 3.5.1. it shows a swarm of creatures trying to survive a hot environment by searching for food, managing their temperature, and leaving pheromone trails for each other.
+This is a Mesa-based swarm model where agents search for food under heat and energy constraints.
 
-## What you need
-make sure you have python installed on your computer.
+## Key Ideas
 
-## How to run it
+* Local perception (radius = 1)
+* Pheromone-based coordination (stigmergy)
+* States: RESTING, EXPLORING, RETURNING
 
-**step 1: Download the code**
-click the green "<> code" button at the top right of this page and choose "download zip". extract that folder to your desktop or documents.
+## Model Architecture & Logic
+<p align="center">
+  <img src="doc/Swarm-architecture.png" width="550">
+</p>
 
-**step 2: Install the packages**
-open your terminal (or command prompt), navigate to the folder you just extracted, and copy-paste this exact command to get all the required tools:
+### 1. Agent State
+- **RESTING** : Agent stays at the nest to retain body temperature($T_i$). It then transitions to **EXPLORING** when temperature reaches minimum safe level $T_{min}$
+- **EXPLORING** : The agenet searches for food using directional movement (One direction for 4-10 steps) to avoid the inneficiency in random wandering. 
+- **RETURNING** : Triggered when food is found or the agent hits the return temperature threshold($T_{return} = 46°C$). 
+### 2. Decentralized Coordination (Stigmergy)
+ **Pheromone Deposition**  
+  When an agent consumes food, the agent estimates local food richness of the area.
+- **Weighted Trails**  
+  Stronger pheromones are produced for richer food clusters. Strength = Base + (Richness * Factor)
+- **Trail Following**  
+  Nearby exploring agents follow stronger pheromone signals to exploit the known food areas.
+### 3. Survival Constraints
+- Temperature increases outside the nest
+- Temperature decreases inside the nest
+- Energy decreases every step
+- Additional energy is lost during movement
 
-pip install mesa==3.5.1 "mesa[viz]" networkx
+An agent dies if:
+- Energy ≤ 0
+- Temperature ≥ critical threshold (Body temperature > 50c)
 
-**step 3: Start the simulation**
-once everything is installed, type this in the terminal and hit enter:
+## Constraint Table
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| Energy (Emax) | 100 | Initial metabolic reserve |
+| Metabolic Decay | -1 / step | Constant energy loss |
+| Movement Cost | -1 / step | Penalty for active displacement |
+| Heat Gain | +0.5 / step | Thermal increase outside the nest |
+| Critical Temp (Tcritical) | 50 | Death threshold |
 
+## Stigmergy Working
+<p align="center">
+  <img src="doc/stigmergy.png" width="550">
+</p>
+
+## Experiment Result
+Detailed screenshots of multiple runs are available in `/docs/results`.
+| Swarm Size | Baseline (Thermal-Only Return) | Improved (Energy-Aware Return) | Net Gain |
+|------------|--------------------------------|--------------------------------|----------|
+| 40 Agents  | 84 steps                       | 84 steps                       | 0%       |
+| 50 Agents  | 81 steps                       | 84 steps                       | +3%      |
+| 60 Agents  | 80 steps                       | 85 steps                       | +5%      |
+
+
+## Setup and running
+``` bash
+## Requirements
+- Python 3.10+
+- Mesa 3.5.1
+- Solara(For visualization)
+### Create virtual environment
+python3 -m venv .venv
+source .venv/bin/activate
+###  Install dependencies
+pip install -r requirements.txt
+### run  
 solara run create.py
+```
 
-**step 4: Watch it run**
-the terminal will give you a local link (usually http://localhost:8765). just click it or paste it into your web browser to watch the swarm! when you're done, just click on your terminal and hit ctrl+c to shut down the server.
+## License
+
+MIT License
