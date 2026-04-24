@@ -10,7 +10,8 @@ This is a Mesa-based swarm model where agents search for food under heat and ene
 
 ## Model Architecture & Logic
 <p align="center">
-  <img src="doc/Swarm-architecture.png" width="550">
+ <img width="1536" height="1024" alt="image" src="https://github.com/user-attachments/assets/37dc07c5-861d-46b5-8c43-29bf6507459b" />
+
 </p>
 
 ### 1. Agent State
@@ -45,7 +46,8 @@ An agent dies if:
 
 ## Stigmergy Working
 <p align="center">
-  <img src="doc/stigmergy.png" width="550">
+  <img width="1922" height="1118" alt="image" src="https://github.com/user-attachments/assets/87bc0bd3-c953-41cc-88ce-a060133d4261" />
+
 </p>
 
 ## Experiment Result
